@@ -1,0 +1,6 @@
+.idea/
+!/.idea/codeStyles
+build/
+.gradle/
+*.jar
+*.class

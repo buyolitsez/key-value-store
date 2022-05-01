@@ -1,0 +1,43 @@
+name: Check Solution
+
+on:
+  # Triggers the workflow on push or pull request events
+  pull_request:
+
+jobs:
+  code_quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run java checkstyle
+        uses: nikitasavinov/checkstyle-action@0.5.1
+        continue-on-error: true
+        with:
+          checkstyle_config: 'checkstyle.xml'
+          reporter: 'github-check' # makes it work for commits and pull-requests
+          checkstyle_version: '10.0'
+
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          java-package: jdk
+          cache: 'gradle'
+
+      - name: Compile Gradle tests
+        # before running tests, try to compile the solution
+        run: ./gradlew compileTestJava --continue --info
+
+      - name: Run Gradle tests
+        # we want gradle to do as much as possible, and show info about failing tests
+        run: ./gradlew check --continue --info
+        # we want to publish report even if tests are failing
+        continue-on-error: true
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v2
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_failure: true

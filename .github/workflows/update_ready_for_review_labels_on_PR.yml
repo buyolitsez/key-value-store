@@ -1,0 +1,35 @@
+name: Update 'ready-for-review' label on PR
+
+# Controls when the action will run. 
+on:
+  #triggered when review is requested or re-requested
+  pull_request:
+    types: [review_requested]
+  
+  # triggered when reviewer requests changes or accepts the review
+  pull_request_review:
+    types: [submitted]
+
+  
+jobs:
+  update-label:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Remove label when changes requested
+        if: github.event_name == 'pull_request_review'
+        uses: buildsville/add-remove-label@v1
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          label: ready-for-review
+          type: remove
+      
+      - name: Add label when review is requested
+        if: github.event_name == 'pull_request'
+        uses: buildsville/add-remove-label@v1
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          label: ready-for-review
+          type: add

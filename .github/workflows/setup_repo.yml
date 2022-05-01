@@ -1,0 +1,80 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Assignment Repository Setup
+
+# Controls when the action will run. 
+on:
+  # Required to initialize student's repository
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  SEMESTER_NAME: Spring 2022
+  TASK_NAME: Key-Value Store
+
+jobs:
+  create_feedback_pull_request:
+    # Job should run only on initial commit (which should happend when the template repository is cloned)
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' &&
+      github.event.before == '0000000000000000000000000000000000000000')
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@master
+
+      - name: Add required labels in the repository
+        uses: crazy-max/ghaction-github-labeler@v3.1.1
+        with:
+          # If enabled, labels will not be deleted if not found in YAML file
+          skip-delete: true
+
+      - name: Create feedback branch and push it
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git branch feedback
+          git push --set-upstream origin feedback
+      - name: Create empty feedback commit
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          echo "This is a dummy file so the commit won't be empty" >> dummy.txt
+          git add dummy.txt
+          git commit -m 'Single empty commit to setup Feedback PR'
+      - name: Create Pull Request
+        # NOTE: other actions will not be triggered by the PR creation,
+        # see https://github.com/peter-evans/create-pull-request/blob/master/docs/concepts-guidelines.md#triggering-further-workflow-runs
+        uses: peter-evans/create-pull-request@v3
+        id: create-pull-request
+        with:
+          title: ${{ format(
+            'Csc Java Course, {0}. {1}. <Enter your name here>. Feedback PR',
+            env.SEMESTER_NAME,
+            env.TASK_NAME
+            ) }}
+          branch: main # student will commit only to main branch
+          base: feedback
+          body: |
+            Проверка данной работы будет осуществляться в этом пулл-реквесте.
+
+            Ваше решение вы должны запушить в ветку main, и оно автоматически появится здесь.
+
+            **Его не нужно мерджить и не нужно закрывать!!!**
+
+            Когда вы будете готовы к первой проверке, сделайте следующее:
+            - Добавьте к этому пулл-реквесту лейбл `ready-for-review`. Это можно сделать в правой части этой страницы в меню `Labels`.
+            - Отправьте ссылку на этот пулл-реквест в качестве решения на сайт CSC.
+
+            Пожалуйста, не забудьте это сделать, иначе мы не сможем оперативно найти вашу работу и проверить её вовремя.
+
+            В дальнейшем, если вы внесли исправления и хотите запросить очередную проверку, просто повторно запросите ревью от преподавателя, который вас уже проверял:
+
+            ![Анимация того, как запросить ревью](https://i.stack.imgur.com/H2XaO.gif)
