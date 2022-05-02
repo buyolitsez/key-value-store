@@ -1,8 +1,9 @@
-package org.csc.java.spring2022;
+package org.csc.java.spring2022.KeyValueStore;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import org.csc.java.spring2022.IndexManager.IndexManager;
 
 public interface KeyValueStore extends Closeable {
   /**

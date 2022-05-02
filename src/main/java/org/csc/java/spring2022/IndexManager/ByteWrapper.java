@@ -1,4 +1,4 @@
-package org.csc.java.spring2022;
+package org.csc.java.spring2022.IndexManager;
 
 import java.util.Arrays;
 

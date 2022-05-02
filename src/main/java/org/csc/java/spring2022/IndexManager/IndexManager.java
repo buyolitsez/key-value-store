@@ -1,10 +1,11 @@
-package org.csc.java.spring2022;
+package org.csc.java.spring2022.IndexManager;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
+import org.csc.java.spring2022.FileBlockLocation;
 
-interface IndexManager extends Closeable {
+public interface IndexManager extends Closeable {
   /**
    * Создает связь key -> listOf(FileBlockLocation) в индексе
    */
