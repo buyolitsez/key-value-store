@@ -9,7 +9,7 @@ import org.csc.java.spring2022.FileBlockLocation;
 /**
  * Класс, который занимается записью/чтением значений в файлы
  */
-interface ValueStoreManager extends Closeable {
+public interface ValueStoreManager extends Closeable {
   /**
    * Записывает значение в файл, возвращает блоки, в которые было записано значение для добавления этой информации
    * в индекс

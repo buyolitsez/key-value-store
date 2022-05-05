@@ -10,6 +10,6 @@ public final class KeyValueStoreFactory {
   }
 
   public static KeyValueStore create(Path workingDir, int valueFileSize) throws IOException {
-    throw new NotImplementedException();
+    return new KeyValueStoreImpl(workingDir, valueFileSize);
   }
 }

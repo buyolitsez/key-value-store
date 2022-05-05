@@ -90,6 +90,9 @@ public class ValueStoreManagerImpl implements ValueStoreManager {
 
       @Override
       public int read() throws IOException {
+        if (value.length == 0) {
+          return -1;
+        }
         if (currentPos == -1) {
           try (var accessFile = new RandomAccessFile(location.fileName(), "r")) {
             accessFile.seek(location.offset());
