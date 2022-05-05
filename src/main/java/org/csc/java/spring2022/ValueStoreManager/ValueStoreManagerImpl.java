@@ -114,5 +114,6 @@ public class ValueStoreManagerImpl implements ValueStoreManager {
   }
 
   @Override
-  public void close() throws IOException {}
+  public void close() throws IOException {
+  }
 }

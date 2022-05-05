@@ -6,6 +6,7 @@ import java.util.List;
 import org.csc.java.spring2022.FileBlockLocation;
 
 public interface IndexManager extends Closeable {
+
   /**
    * Создает связь key -> listOf(FileBlockLocation) в индексе
    */

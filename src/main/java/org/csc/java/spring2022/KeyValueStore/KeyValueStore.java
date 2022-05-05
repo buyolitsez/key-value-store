@@ -6,6 +6,7 @@ import java.io.InputStream;
 import org.csc.java.spring2022.IndexManager.IndexManager;
 
 public interface KeyValueStore extends Closeable {
+
   /**
    * Проверяет, есть ли такой ключ в хранилище
    */
@@ -22,7 +23,8 @@ public interface KeyValueStore extends Closeable {
   byte[] loadValue(byte[] key) throws IOException;
 
   /**
-   * Записывает новое значение по ключу. Если ключ уже существует в базе, тогда перезаписывает старое значение
+   * Записывает новое значение по ключу. Если ключ уже существует в базе, тогда перезаписывает
+   * старое значение
    */
   void upsert(byte[] key, byte[] value) throws IOException;
 
