@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.csc.java.spring2022.IndexManager.IndexManager;
 import org.csc.java.spring2022.IndexManager.IndexManagerImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +20,11 @@ public class IndexManagerTest {
   @BeforeEach
   public void deleteIndexFile() {
     workingDir.resolve("index").toFile().delete();
+  }
+
+  @BeforeEach
+  public void createWorkingDir() {
+    workingDir.toFile().mkdir();
   }
 
   @Test

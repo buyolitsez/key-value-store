@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Random;
 import org.csc.java.spring2022.ValueStoreManager.ValueStoreManagerImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -15,6 +16,11 @@ public class ValueStoreManagerTest {
 
   Path workingDir = Path.of("src/test/java/resources/");
   Random random = new Random(5);
+
+  @BeforeEach
+  public void createWorkingDir() {
+    workingDir.toFile().mkdir();
+  }
 
   private String getPath(String s) {
     return workingDir.resolve(s).toString();
