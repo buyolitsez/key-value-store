@@ -1,4 +1,4 @@
-package org.csc.java.spring2022.IndexManager;
+package org.csc.databaseIndexManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
@@ -15,9 +14,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.csc.java.spring2022.FileBlockLocation;
+import org.csc.RecordInFileLocation;
 
-public class IndexManagerImpl implements IndexManager {
+public class DatabaseIndexManagerImpl implements DatabaseIndexManager {
 
   private final String indexFilename;
   private final File fromKeyHashcodeToOffsetFile;
@@ -27,7 +26,7 @@ public class IndexManagerImpl implements IndexManager {
   private int totalyWrote = 0;
   private final RandomAccessFile fileAccess;
 
-  public IndexManagerImpl(Path workingDir) throws IOException {
+  public DatabaseIndexManagerImpl(Path workingDir) throws IOException {
     Path pathToIndexFile = workingDir.resolve("index");
     pathToIndexFile.toFile().createNewFile();
     indexFilename = pathToIndexFile.toString();
@@ -67,7 +66,7 @@ public class IndexManagerImpl implements IndexManager {
   }
 
   @Override
-  public void add(byte[] key, List<FileBlockLocation> writtenBlocks) throws IOException {
+  public void add(byte[] key, List<RecordInFileLocation> writtenBlocks) throws IOException {
     int keyHashcode = Arrays.hashCode(key);
 
     byte[] currentArray = getBytes(writtenBlocks);
@@ -89,7 +88,7 @@ public class IndexManagerImpl implements IndexManager {
   }
 
   @Override
-  public List<FileBlockLocation> getFileBlocksLocations(byte[] key) throws IOException {
+  public List<RecordInFileLocation> getFileBlocksLocations(byte[] key) throws IOException {
     int keyHashcode = Arrays.hashCode(key);
     if (!fromKeyHashcodeToOffset.containsKey(keyHashcode)) {
       return List.of();
@@ -101,9 +100,9 @@ public class IndexManagerImpl implements IndexManager {
     byte[] data = new byte[byteArrayLength];
     fileAccess.read(data);
 
-    List<FileBlockLocation> result = convertBytes(data);
+    List<RecordInFileLocation> result = convertBytes(data);
     if (result.isEmpty()) {
-      return List.of(new FileBlockLocation("zero size!", 0, 0));
+      return List.of(new RecordInFileLocation("zero size!", 0, 0));
     }
     return result;
   }

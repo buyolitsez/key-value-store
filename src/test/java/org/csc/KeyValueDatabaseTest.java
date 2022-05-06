@@ -1,10 +1,10 @@
-package org.csc.java.spring2022;
+package org.csc;
 
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.NotDirectoryException;
-import org.csc.java.spring2022.KeyValueStore.KeyValueStore;
-import org.csc.java.spring2022.KeyValueStore.KeyValueStoreFactory;
+import org.csc.keyValueDatabase.KeyValueStoreFactory;
+import org.csc.keyValueDatabase.KeyValueDatabase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -15,11 +15,11 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class KeyValueStoreTest {
+public class KeyValueDatabaseTest {
 
   @Test
   public void testUpsert(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 1);
+    KeyValueDatabase kvStore = initStore(tempDir, 1);
 
     byte[] key = "a".getBytes();
     kvStore.upsert(key, "1".getBytes());
@@ -31,7 +31,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testUpsertAndRemove(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 1);
+    KeyValueDatabase kvStore = initStore(tempDir, 1);
 
     byte[] key = "a".getBytes();
 
@@ -47,7 +47,7 @@ public class KeyValueStoreTest {
 
   @Test
   void testRemoveOnEmptyStore(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 1);
+    KeyValueDatabase kvStore = initStore(tempDir, 1);
 
     byte[] key = "a".getBytes();
     assertFalse(kvStore.remove(key));
@@ -57,7 +57,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testUpsertAndLoad(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 2);
+    KeyValueDatabase kvStore = initStore(tempDir, 2);
 
     byte[] key = "a".getBytes();
     byte[] value = "1".getBytes();
@@ -71,7 +71,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testOpenStreamAndRead(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 2);
+    KeyValueDatabase kvStore = initStore(tempDir, 2);
 
     byte[] key = "a".getBytes();
     byte[] value = "1234567".getBytes();
@@ -87,7 +87,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testUpsertTwoEntries(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 8);
+    KeyValueDatabase kvStore = initStore(tempDir, 8);
 
     byte[] key1 = "a".getBytes();
     byte[] value1 = "1234".getBytes();
@@ -105,7 +105,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testUpsertBigValue(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 1);
+    KeyValueDatabase kvStore = initStore(tempDir, 1);
 
     byte[] key = "a".getBytes();
     byte[] value = "1234567890".getBytes();
@@ -118,7 +118,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testUpsertAndLoadEmptyValue(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 1);
+    KeyValueDatabase kvStore = initStore(tempDir, 1);
 
     kvStore.upsert("a".getBytes(), new byte[0]);
 
@@ -129,9 +129,7 @@ public class KeyValueStoreTest {
 
   @Test
   void testKeyValueStoreApiWithIllegalArguments(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 10);
-
-    // мы советуем предпочесть Objects.requireNonNull в качестве проверки на null
+    KeyValueDatabase kvStore = initStore(tempDir, 10);
 
     assertThatThrownBy(() -> kvStore.contains(null))
         .isInstanceOfAny(NullPointerException.class, IllegalArgumentException.class);
@@ -190,7 +188,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testLoadNonExistentEntry(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 2);
+    KeyValueDatabase kvStore = initStore(tempDir, 2);
 
     assertThrows(IOException.class, () -> kvStore.loadValue("a".getBytes()));
 
@@ -199,7 +197,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testOpenStreamToNonExistentEntry(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 2);
+    KeyValueDatabase kvStore = initStore(tempDir, 2);
 
     assertThrows(IOException.class, () -> kvStore.openValueStream("a".getBytes()));
 
@@ -208,7 +206,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testRewriteWithSmallerValue(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 1);
+    KeyValueDatabase kvStore = initStore(tempDir, 1);
 
     byte[] key = "a".getBytes();
     kvStore.upsert(key, "42".getBytes());
@@ -221,7 +219,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testRewriteWithBiggerValue(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 1);
+    KeyValueDatabase kvStore = initStore(tempDir, 1);
 
     byte[] key = "a".getBytes();
     kvStore.upsert(key, "1".getBytes());
@@ -234,7 +232,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testUpsertAndGetSeveralKVSmallFile(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 1);
+    KeyValueDatabase kvStore = initStore(tempDir, 1);
 
     byte[] key1 = "a".getBytes();
     byte[] value1 = "12".getBytes();
@@ -258,7 +256,7 @@ public class KeyValueStoreTest {
     byte[] key2 = "b".getBytes();
     byte[] value2 = "345".getBytes();
 
-    try (KeyValueStore kvStore = initStore(tempDir, 5)) {
+    try (KeyValueDatabase kvStore = initStore(tempDir, 5)) {
       kvStore.upsert(key1, value1);
       kvStore.upsert(key2, value2);
 
@@ -269,7 +267,7 @@ public class KeyValueStoreTest {
     byte[] newValue1 = "321".getBytes();
     byte[] newValue2 = "654".getBytes();
 
-    try (KeyValueStore kvStore = initStore(tempDir, 5)) {
+    try (KeyValueDatabase kvStore = initStore(tempDir, 5)) {
       kvStore.upsert(key1, newValue1);
       kvStore.upsert(key2, newValue2);
 
@@ -277,7 +275,7 @@ public class KeyValueStoreTest {
       assertArrayEquals(kvStore.loadValue(key1), newValue1);
     }
 
-    try (KeyValueStore kvStore = initStore(tempDir, 5)) {
+    try (KeyValueDatabase kvStore = initStore(tempDir, 5)) {
       assertArrayEquals(kvStore.loadValue(key2), newValue2);
       assertArrayEquals(kvStore.loadValue(key1), newValue1);
     }
@@ -285,7 +283,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testUpsertRemoveUpsertRead(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 5);
+    KeyValueDatabase kvStore = initStore(tempDir, 5);
 
     byte[] key1 = "a".getBytes();
     byte[] value1 = "123".getBytes();
@@ -309,7 +307,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testUpsertCloseRemoveCloseContains(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 5);
+    KeyValueDatabase kvStore = initStore(tempDir, 5);
 
     byte[] key = "a".getBytes();
 
@@ -332,7 +330,7 @@ public class KeyValueStoreTest {
 
   @Test
   public void testMultipleFilesSupport(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 1);
+    KeyValueDatabase kvStore = initStore(tempDir, 1);
 
     byte[] bytes = "a".getBytes();
     kvStore.upsert(bytes, "123".getBytes());
@@ -345,7 +343,7 @@ public class KeyValueStoreTest {
 
   @Test
   void storeCannotBeUsedAfterBeingClosed(@TempDir Path tempDir) throws IOException {
-    KeyValueStore kvStore = initStore(tempDir, 1);
+    KeyValueDatabase kvStore = initStore(tempDir, 1);
 
     byte[] key = {42};
     byte[] value = {1, 2, 3};
@@ -369,7 +367,7 @@ public class KeyValueStoreTest {
         .isInstanceOf(IllegalStateException.class);
   }
 
-  private KeyValueStore initStore(Path workingDir, int maxValueFileSize) throws IOException {
+  private KeyValueDatabase initStore(Path workingDir, int maxValueFileSize) throws IOException {
     return KeyValueStoreFactory.create(workingDir, maxValueFileSize);
   }
 }
